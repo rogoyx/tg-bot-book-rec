@@ -1,0 +1,7 @@
+.vscode
+postgres
+*.ipynb
+router
+alembic
+*.ini
+.DS_Store

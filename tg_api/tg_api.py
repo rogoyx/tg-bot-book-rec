@@ -1,8 +1,10 @@
+import os
+
 from aiogram import Bot, Dispatcher, types, executor
 import requests
 
 
-TOKEN_API = ''
+TOKEN = os.getenv('TG_TOKEN', '')
 
 HELP_COMMAND = '''
 /help - command list
@@ -33,13 +35,11 @@ async def help_message(message: types.Message):
     
 @dp.message_handler()
 async def get_recommendation(message: types.Message):
-    r = requests.post('http://127.0.0.1:8000/get_ml_recommendation', data={'tg_message': message.text})
-    await message.answer(message.text)
-    
-#@dp.message_handler()
-#async def echo_upper(message: types.Message):
-#    await message.answer(message.text)
-
+    response = requests.post(
+        'http://127.0.0.1:8000/get_ml_recommendation',
+        data={'chat_id': message.chat.id, 'tg_message': message.text}
+    )
+    await message.answer(f'{message.text} send to ml back. Status code: {response.status_code}, elapsed {response.elapsed}')
 
 if __name__ == '__main__':
     executor.start_polling(dp)
