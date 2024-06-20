@@ -1,3 +1,5 @@
+from typing import List
+
 import json
 
 import numpy as np
@@ -19,6 +21,15 @@ app = _fastapi.FastAPI()
 async def create_contact(contact: _schemas.CreateContact, 
                          db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.create_contact(contact=contact, db=db)
+
+@app.get("/api/contacts/", response_model=List[_schemas.Contact])
+async def get_all_contacts(db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_all_contacts(db=db)
+
+@app.get("/api/contacts/{contact_id}", response_model=_schemas.Contact)
+async def get_contact(contact_id: int, 
+                      db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_contact(contact_id=contact_id, db=db)
 
 @app.post("/insert_into_database")
 async def db_func():
@@ -43,6 +54,19 @@ async def ml_recommend(data=_fastapi.Body()):
         data={'chat_id': chat_id, 'recommendations': f'{recommendations_list}'}
     )
     return 'OK recommendations'
+
+@app.post("/save_logs")
+async def save_logs(tg_data=_fastapi.Body(),
+                    db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    data = tg_data.decode().split('&')
+    chat_id = data[0].split('=')[1]
+    msg = data[1].split('=')[1]
+    data = {"first_name": msg,
+            "last_name": msg,
+            "email": chat_id,
+            "phone_number": chat_id}
+    new_contact = await create_contact(contact=data, db=db)
+    return 'OK save logs'
 
 
 

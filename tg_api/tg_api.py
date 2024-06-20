@@ -33,13 +33,21 @@ async def start_message(message: types.Message):
 async def help_message(message: types.Message):
     await message.reply(text=HELP_COMMAND)
     
+#@dp.message_handler()
+#async def get_recommendation(message: types.Message):
+#    response = requests.post(
+#        'http://127.0.0.1:8000/get_ml_recommendation',
+#        data={'chat_id': message.chat.id, 'tg_message': message.text}
+#    )
+#    await message.answer(f'{message.text} send to ml back. Status code: {response.status_code}, elapsed {response.elapsed}')
+
 @dp.message_handler()
-async def get_recommendation(message: types.Message):
+async def save_logs(message: types.Message):
     response = requests.post(
-        'http://127.0.0.1:8000/get_ml_recommendation',
+        'http://127.0.0.1:8000/save_logs',
         data={'chat_id': message.chat.id, 'tg_message': message.text}
     )
-    await message.answer(f'{message.text} send to ml back. Status code: {response.status_code}, elapsed {response.elapsed}')
+    await message.answer(f'{message.text} send to log save. Status code: {response.status_code}, elapsed {response.elapsed}')
 
 if __name__ == '__main__':
     executor.start_polling(dp)
