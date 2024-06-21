@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, types, executor
 import requests
 
 
-TOKEN = os.getenv('TG_TOKEN', '')
+TOKEN_API = os.getenv('TG_TOKEN', '')
 
 HELP_COMMAND = '''
 /help - command list
@@ -45,8 +45,12 @@ async def help_message(message: types.Message):
 async def save_logs(message: types.Message):
     response = requests.post(
         'http://127.0.0.1:8000/save_logs',
-        data={'chat_id': message.chat.id, 'tg_message': message.text}
-    )
+        data={'user_id': message.chat.id, 
+              'first_name': message.chat.first_name,
+              'username': message.chat.username,
+              'message_id': message.message_id,
+              'text': message.text,
+              'date': message.date})
     await message.answer(f'{message.text} send to log save. Status code: {response.status_code}, elapsed {response.elapsed}')
 
 if __name__ == '__main__':

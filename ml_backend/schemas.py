@@ -17,3 +17,21 @@ class Contact(_BaseContact):
 
 class CreateContact(_BaseContact):
     pass
+
+class _BaseLogs(_pydantic.BaseModel):
+    user_id: int
+    first_name: str
+    username: str
+    message_id: int
+    text: str
+    date:str
+
+class Logs(_BaseLogs):
+    id: int
+    date_created: _dt.datetime
+    
+    class Config:
+        from_attributes = True
+
+class Logging(_BaseLogs):
+    pass

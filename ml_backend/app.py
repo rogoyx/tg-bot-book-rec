@@ -31,6 +31,11 @@ async def get_contact(contact_id: int,
                       db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_contact(contact_id=contact_id, db=db)
 
+@app.post("/api/logs", response_model=_schemas.Logs)
+async def logging(logs: _schemas.Logging,
+                  db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.logging(logs=logs, db=db)
+
 @app.post("/insert_into_database")
 async def db_func():
     #conn = psycopg2.connect(host=HOST_DB, port=PORT, database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD)
@@ -59,15 +64,22 @@ async def ml_recommend(data=_fastapi.Body()):
 async def save_logs(tg_data=_fastapi.Body(),
                     db: _orm.Session = _fastapi.Depends(_services.get_db)):
     data = tg_data.decode().split('&')
-    chat_id = data[0].split('=')[1]
-    msg = data[1].split('=')[1]
-    data = {"first_name": msg,
-            "last_name": msg,
-            "email": chat_id,
-            "phone_number": chat_id}
-    new_contact = await create_contact(contact=data, db=db)
+    # make a function
+    user_id = data[0].split('=')[1]
+    first_name = data[1].split('=')[1]
+    username = data[2].split('=')[1]
+    message_id = data[3].split('=')[1]
+    # processing text with +,.)(!?
+    text = data[4].split('=')[1].replace("+", " ")
+    date = data[5].split('=')[1]
+    data = {'user_id': user_id,
+            'first_name': first_name,
+            'username': username,
+            'message_id': message_id,
+            'text': text,
+            'date':date}
+    new_logs = await logging(logs=data, db=db)
     return 'OK save logs'
-
 
 
 ### ml recommendation engine

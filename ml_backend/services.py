@@ -27,3 +27,11 @@ async def get_contact(contact_id: int,
                       db: "Session"):
     contact = db.query(_models.Contact).filter(_models.Contact.id == contact_id).first()
     return contact
+
+async def logging(logs: _schemas.Logging,
+                  db: "Session"):
+    logs = _models.Logs(**logs)
+    db.add(logs)
+    db.commit()
+    db.refresh(logs)
+    return _schemas.Logs.from_orm(logs)
