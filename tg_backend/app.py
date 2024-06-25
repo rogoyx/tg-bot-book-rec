@@ -8,6 +8,7 @@ from httpx import AsyncClient
 
 app = FastAPI()
 
+TG_BACK_PORT = 8080 # TODO: move to config
 TOKEN = os.getenv('TG_TOKEN', '')
 
 @app.post('/tg_send_recommendation')
@@ -24,4 +25,4 @@ async def tg_send_recommendation(data=Body()):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8080)
+    uvicorn.run(app, host='0.0.0.0', port=TG_BACK_PORT)

@@ -8,6 +8,7 @@ def get_ml_recommendation(text: str, num_neighbors: int = 5) -> List[str]:
    return book_recomend_list
 
 def get_vector_from_msg(text: str) -> np.ndarray:
+   # text_emb = lang_model.vectorize(text)
    return np.zeros(len(text))
 
 def get_book_vector_neighbors(msg_vector, num_neighbors):

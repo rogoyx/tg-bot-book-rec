@@ -3,6 +3,7 @@ import os
 from aiogram import Bot, Dispatcher, types, executor
 import requests
 
+# from ml_backend.app import ML_BACK_PORT
 
 TOKEN_API = os.getenv('TG_TOKEN', '')
 
@@ -32,19 +33,11 @@ async def start_message(message: types.Message):
 @dp.message_handler(commands=['help'])
 async def help_message(message: types.Message):
     await message.reply(text=HELP_COMMAND)
-    
-#@dp.message_handler()
-#async def get_recommendation(message: types.Message):
-#    response = requests.post(
-#        'http://127.0.0.1:8000/get_ml_recommendation',
-#        data={'chat_id': message.chat.id, 'tg_message': message.text}
-#    )
-#    await message.answer(f'{message.text} send to ml back. Status code: {response.status_code}, elapsed {response.elapsed}')
 
 @dp.message_handler()
-async def save_logs(message: types.Message):
+async def send_log_to_ml(message: types.Message):
     response = requests.post(
-        'http://127.0.0.1:8000/save_logs',
+        f'http://127.0.0.1:8000/process_log', # f'http://127.0.0.1:{ML_BACK_PORT}/save_logs',
         data={'user_id': message.chat.id, 
               'first_name': message.chat.first_name,
               'username': message.chat.username,
@@ -52,6 +45,21 @@ async def save_logs(message: types.Message):
               'text': message.text,
               'date': message.date})
     await message.answer(f'{message.text} send to log save. Status code: {response.status_code}, elapsed {response.elapsed}')
+
+
+#@dp.message_handler()
+#async def send_log_to_ml(message: types.Message):
+#    response = requests.post(
+#        f'http://127.0.0.1:{ML_BACK_PORT}/process_log',
+#        data={'user_id': message.chat.id, 
+#              'first_name': message.chat.first_name,
+#              'username': message.chat.username,
+#              'message_id': message.message_id,
+#              'text': message.text,
+#              'date': message.date})
+#    await message.answer(
+#        f'{message.text} ... . Status code: {response.status_code}, elapsed {response.elapsed}'
+#    )
 
 if __name__ == '__main__':
     executor.start_polling(dp)
