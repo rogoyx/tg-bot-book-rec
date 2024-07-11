@@ -8,7 +8,7 @@ from httpx import AsyncClient
 
 app = FastAPI()
 
-TG_BACK_PORT = 8080 # TODO: move to config
+TG_BACK_PORT = 8080 # TODO: move to config or to env variable
 TOKEN = os.getenv('TG_TOKEN', '')
 
 @app.post('/tg_send_recommendation')

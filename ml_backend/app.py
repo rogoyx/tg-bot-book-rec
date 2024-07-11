@@ -11,10 +11,9 @@ from sqlalchemy.orm import Session
 
 import schemas as _schemas
 import services as _services
-#from tg_backend.app import TG_BACK_PORT
-#from ml_backend.ml_engine import get_ml_recommendation
+# from ml_engine import get_ml_recommendation, process_raw_tg
 
-
+TG_BACK_PORT = 8080 # TODO: move to config or to env variable
 ML_BACK_PORT = 8000 # TODO: move to config
 
 app = _fastapi.FastAPI()
@@ -52,7 +51,7 @@ async def process_log(tg_data=_fastapi.Body(),
     # 2. get ml rec
     recommendations_list = get_ml_recommendation(data)
     response = requests.post(
-        f'http://127.0.0.1:8080/tg_send_recommendation', # f'http://127.0.0.1:{TG_BACK_PORT}/tg_send_recommendation'
+        f'http://127.0.0.1:{TG_BACK_PORT}/tg_send_recommendation',
         data={'chat_id': data['user_id'], 'recommendations': f'{recommendations_list}'}
     )
     return 'OK save logs and get ml recommendations'
