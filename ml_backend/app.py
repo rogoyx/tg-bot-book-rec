@@ -8,6 +8,7 @@ import uvicorn
 import psycopg2
 import sqlalchemy.orm as _orm
 from sqlalchemy.orm import Session
+from openai import OpenAI
 
 import schemas as _schemas
 import services as _services
@@ -49,10 +50,18 @@ async def process_log(tg_data=_fastapi.Body(),
     new_logs = await logging(logs=data, db=db)
 
     # 2. get ml rec
-    recommendations_list = get_ml_recommendation(data)
+#    recommendations_list = get_ml_recommendation(data)
+#    response = requests.post(
+#        f'http://127.0.0.1:{TG_BACK_PORT}/tg_send_recommendation',
+#        data={'chat_id': data['user_id'], 'recommendations': f'{recommendations_list}'}
+#    )
+    client = OpenAI(api_key = "")
+    gpt_responce = client.chat.completions.create(
+        model='gpt-3.5-turbo',messages=[{"role": "user", "content": data['text']}]
+        )
     response = requests.post(
         f'http://127.0.0.1:{TG_BACK_PORT}/tg_send_recommendation',
-        data={'chat_id': data['user_id'], 'recommendations': f'{recommendations_list}'}
+        data={'chat_id': data['user_id'], 'recommendations': f'{gpt_responce.choices[0].message.content}'}
     )
     return 'OK save logs and get ml recommendations'
 

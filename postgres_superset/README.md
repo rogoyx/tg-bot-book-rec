@@ -25,6 +25,7 @@
 * text
 * book_ids_array: which books was used in this recommendation
 * date
+* log_id: FK referencing logs table, answer to what request
 5. description_vectors — descriptions in vector form. 
 * vector_id: PK
 * description_vector
