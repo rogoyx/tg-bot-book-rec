@@ -13,6 +13,7 @@ TOKEN = os.getenv('TG_TOKEN', '')
 
 @app.post('/tg_send_recommendation')
 async def tg_send_recommendation(data=Body()):
+    # TODO update decoding part
     data = data.decode().split('&')
     chat_id = data[0].split('=')[1]
     list_string = data[1].split('=')[1]
